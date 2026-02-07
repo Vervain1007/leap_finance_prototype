@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leap Scholar – IELTS Prep</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --white: #fff; --off-white: #f8f9fc; --purple-700: #6d28d9; --purple-600: #7c3aed;
+      --purple-500: #8b5cf6; --purple-300: #a78bfa; --purple-200: #c4b5fd; --purple-100: #ede9fe;
+      --purple-50: #f5f3ff; --blue-700: #1d4ed8; --blue-500: #3b82f6; --blue-100: #dbeafe;
+      --gray-800: #1f2937; --gray-700: #374151; --gray-600: #4b5563; --gray-500: #6b7280;
+      --success: #059669; --error: #dc2626; --radius: 12px; --radius-lg: 20px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: linear-gradient(135deg, #f8f9fc, #ede9fe, #dbeafe); min-height: 100vh; color: #1f2937; }
+    #app { max-width: 480px; margin: 0 auto; min-height: 100vh; background: var(--white); box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+    .screen { display: none; min-height: 100vh; padding: 24px; }
+    .screen.active { display: block !important; }
+    #screen-onboarding { display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, #fff, #ede9fe); }
+    .onboarding-content { width: 100%; max-width: 360px; }
+    .logo { font-size: 1.25rem; font-weight: 700; color: #6d28d9; margin-bottom: 32px; }
+    .onboarding-content h1 { font-size: 1.75rem; margin-bottom: 12px; }
+    .subtitle { color: #4b5563; margin-bottom: 32px; }
+    .onboarding-form label { display: block; font-weight: 600; margin-bottom: 12px; }
+    .score-options, .time-options { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .score-btn, .time-btn { padding: 12px 20px; border: 2px solid #ede9fe; background: #fff; border-radius: 12px; cursor: pointer; }
+    .score-btn:hover, .time-btn:hover { border-color: #a78bfa; background: #ede9fe; }
+    .score-btn.selected, .time-btn.selected { border-color: #8b5cf6; background: #8b5cf6; color: #fff; }
+    .cta-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #7c3aed, #1d4ed8); color: #fff; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
+    .cta-btn:hover { opacity: 0.9; }
+    .dashboard-header { display: flex; justify-content: space-between; margin-bottom: 24px; }
+    .streak-badge { background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+    .progress-bar { height: 8px; background: #ede9fe; border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #8b5cf6, #3b82f6); border-radius: 4px; }
+    .task-card { background: linear-gradient(135deg, #ede9fe, #dbeafe); border: 2px solid #c4b5fd; border-radius: 20px; padding: 24px; margin-bottom: 24px; text-align: center; cursor: pointer; }
+    .task-card:hover { transform: translateY(-4px); }
+    .quick-links { display: flex; gap: 12px; flex-wrap: wrap; }
+    .nav-btn { flex: 1; min-width: 120px; padding: 12px; background: #fff; border: 2px solid #ede9fe; border-radius: 12px; cursor: pointer; }
+    .back-btn { background: none; border: none; color: #7c3aed; font-weight: 600; cursor: pointer; }
+    .timer { font-size: 1.25rem; font-weight: 700; color: #6d28d9; background: #ede9fe; padding: 8px 16px; border-radius: 12px; }
+    .question-card { background: #f8f9fc; border-radius: 20px; padding: 24px; border: 1px solid #ede9fe; }
+    .option-btn { padding: 16px; background: #fff; border: 2px solid #ede9fe; border-radius: 12px; text-align: left; cursor: pointer; display: block; width: 100%; margin-bottom: 12px; }
+    .option-btn.correct { border-color: #059669; background: #d1fae5; }
+    .option-btn.wrong { border-color: #dc2626; background: #fee2e2; }
+    .next-btn { margin-top: 20px; padding: 12px; background: #7c3aed; color: #fff; border: none; border-radius: 12px; font-weight: 600; width: 100%; cursor: pointer; }
+    .feedback-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 100; }
+    .feedback-overlay.visible { display: flex; }
+    .feedback-content { background: #fff; border-radius: 20px; padding: 32px; text-align: center; max-width: 320px; }
+    .feedback-continue { padding: 12px 24px; background: #7c3aed; color: #fff; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; margin-top: 16px; }
+    #screen-reward { display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, #ede9fe, #dbeafe); }
+    .reward-stats { display: flex; flex-direction: column; gap: 16px; margin: 24px 0; }
+    .stat-box { background: #fff; padding: 20px; border-radius: 12px; border: 2px solid #ede9fe; }
+    .stat-box.highlight { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+    .leader-item { display: flex; align-items: center; gap: 16px; padding: 16px; background: #f8f9fc; border-radius: 12px; margin-bottom: 12px; }
+    .leader-item.you { background: linear-gradient(135deg, #ede9fe, #dbeafe); }
+    .review-card, .improvement-box, .suggestion-box { background: #f8f9fc; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+    .roadmap-step { display: flex; gap: 16px; padding: 20px; border-radius: 12px; margin-bottom: 8px; background: #f8f9fc; border: 2px solid #ede9fe; }
+    .roadmap-step.completed { background: #d1fae5; border-color: #059669; }
+    .roadmap-step.current { background: linear-gradient(135deg, #ede9fe, #dbeafe); }
+    .roadmap-step.locked { opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <section id="screen-onboarding" class="screen active">
+      <div class="onboarding-content">
+        <div class="logo">📚 Leap Scholar</div>
+        <h1>Welcome to IELTS Prep! 🌟</h1>
+        <p class="subtitle">Let's personalize your journey. Quick questions — promise it won't take long!</p>
+        <div class="onboarding-form">
+          <label>What's your target IELTS score?</label>
+          <div class="score-options">
+            <button type="button" class="score-btn" data-score="6.0">6.0</button>
+            <button type="button" class="score-btn" data-score="6.5">6.5</button>
+            <button type="button" class="score-btn selected" data-score="7.0">7.0</button>
+            <button type="button" class="score-btn" data-score="7.5">7.5</button>
+            <button type="button" class="score-btn" data-score="8.0">8.0+</button>
+          </div>
+          <label>How much time can you spare daily?</label>
+          <div class="time-options">
+            <button type="button" class="time-btn" data-minutes="5">5 min</button>
+            <button type="button" class="time-btn selected" data-minutes="10">10 min</button>
+            <button type="button" class="time-btn" data-minutes="15">15 min</button>
+            <button type="button" class="time-btn" data-minutes="20">20 min</button>
+          </div>
+          <button type="button" id="onboarding-complete" class="cta-btn">Let's Go! 🚀</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-dashboard" class="screen">
+      <header class="dashboard-header">
+        <div class="logo">📚 Leap</div>
+        <div><span class="streak-badge">🔥 5 day streak</span> <span>❤️❤️❤️</span></div>
+      </header>
+      <h2>Good morning! ☀️</h2>
+      <p style="color:#4b5563;margin-bottom:24px">You're on fire! One more day and you'll beat your best streak.</p>
+      <div style="margin-bottom:24px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>Preparation Progress</span><span style="color:#7c3aed;font-weight:600">42%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:42%"></div></div>
+      </div>
+      <div class="task-card" id="start-task">
+        <div style="font-size:2.5rem;margin-bottom:12px">📝</div>
+        <h3>Today's 10-minute task</h3>
+        <p>Quick Reading Comprehension Quiz</p>
+        <span style="font-size:0.85rem;color:#6b7280">~8 questions • 10 min</span>
+        <button type="button" class="cta-btn" style="margin-top:16px">Start Practice →</button>
+      </div>
+      <div class="quick-links">
+        <button type="button" class="nav-btn" data-screen="leaderboard">🏆 Leaderboard</button>
+        <button type="button" class="nav-btn" data-screen="weekly-review">📊 Weekly Review</button>
+        <button type="button" class="nav-btn" data-screen="roadmap">🗺️ Roadmap</button>
+      </div>
+    </section>
+
+    <section id="screen-task" class="screen">
+      <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+        <button type="button" class="back-btn" data-screen="dashboard">← Back</button>
+        <div class="timer" id="quiz-timer">10:00</div>
+        <span>Q <span id="current-q">1</span>/<span id="total-q">8</span></span>
+      </header>
+      <div class="question-card">
+        <p style="font-size:0.85rem;color:#7c3aed;font-weight:600;margin-bottom:12px">Reading • Passage 1</p>
+        <h3 id="question-text" style="margin-bottom:20px">Loading...</h3>
+        <div id="options"></div>
+        <button type="button" class="next-btn" id="next-question" disabled>Next →</button>
+      </div>
+      <div class="feedback-overlay" id="feedback-overlay">
+        <div class="feedback-content">
+          <span id="feedback-emoji" style="font-size:3rem;display:block;margin-bottom:16px">✓</span>
+          <p id="feedback-text" style="font-size:1.25rem;font-weight:600">Correct!</p>
+          <p id="feedback-explanation" style="color:#4b5563;margin-top:8px"></p>
+          <button type="button" class="feedback-continue" id="feedback-continue">Got it! →</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-reward" class="screen">
+      <div style="text-align:center;max-width:360px">
+        <div style="font-size:4rem;margin-bottom:16px">🎉</div>
+        <h1>Awesome work! 🌟</h1>
+        <p style="color:#4b5563">You completed today's task!</p>
+        <div class="reward-stats">
+          <div class="stat-box"><span id="points-earned" style="font-size:1.5rem;font-weight:700;color:#6d28d9">+85</span><br><span style="font-size:0.9rem;color:#4b5563">Points earned</span></div>
+          <div class="stat-box highlight"><span style="font-size:1.5rem;font-weight:700">🔥 6</span><br><span style="font-size:0.9rem">Day streak!</span></div>
+          <div class="stat-box"><span style="font-size:1.5rem">🔓</span><br><span style="font-size:0.9rem;color:#4b5563">Writing Module Unlocked!</span></div>
+        </div>
+        <p style="margin-bottom:24px">Keep it up! Consistency is your superpower. 💪</p>
+        <button type="button" class="cta-btn" id="reward-continue">Continue to Dashboard</button>
+      </div>
+    </section>
+
+    <section id="screen-leaderboard" class="screen">
+      <button type="button" class="back-btn" data-screen="dashboard">← Back</button>
+      <h2 style="margin:24px 0 8px">🏆 Weekly Leaderboard</h2>
+      <p class="subtitle" style="margin-bottom:24px">Friendly competition — do your best!</p>
+      <div class="leader-item"><span style="width:32px;height:32px;background:#fef3c7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">1</span><span style="flex:1">Sarah K.</span><span style="font-weight:600;color:#7c3aed">2,340 pts</span></div>
+      <div class="leader-item"><span style="width:32px;height:32px;background:#e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">2</span><span style="flex:1">Ravi M.</span><span style="font-weight:600;color:#7c3aed">2,120 pts</span></div>
+      <div class="leader-item you"><span style="width:32px;height:32px;background:#fed7aa;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">3</span><span style="flex:1">You 👋</span><span style="font-weight:600;color:#7c3aed">1,890 pts</span></div>
+    </section>
+
+    <section id="screen-weekly-review" class="screen">
+      <button type="button" class="back-btn" data-screen="dashboard">← Back</button>
+      <h2 style="margin:24px 0 8px">📊 Your Weekly Review</h2>
+      <p class="subtitle" style="margin-bottom:24px">Week of Feb 1–7</p>
+      <div class="review-card"><h4>💪 Strengths</h4><ul><li>Reading — 92%</li><li>Listening — Strong</li></ul></div>
+      <div class="review-card"><h4>📈 Focus Areas</h4><ul><li>Writing Task 2</li><li>Speaking Part 2</li></ul></div>
+      <div class="improvement-box"><h4>📈 vs Last Week</h4><p>+12% Reading • +3 day streak</p></div>
+    </section>
+
+    <section id="screen-roadmap" class="screen">
+      <button type="button" class="back-btn" data-screen="dashboard">← Back</button>
+      <h2 style="margin:24px 0 8px">🗺️ Your Preparation Path</h2>
+      <p class="subtitle" style="margin-bottom:24px">Step by step to your target score</p>
+      <div class="roadmap-step completed"><span>✓</span><div><h4>Reading Foundations</h4><p>Completed</p></div></div>
+      <div class="roadmap-step completed"><span>✓</span><div><h4>Listening Basics</h4><p>Completed</p></div></div>
+      <div class="roadmap-step current"><span>→</span><div><h4>Reading Practice</h4><p>42% — In progress</p></div></div>
+      <div class="roadmap-step locked"><span>🔒</span><div><h4>Writing Task 2</h4><p>Unlock after Reading</p></div></div>
+    </section>
+  </div>
+
+  <script>
+(function() {
+  var state = { targetScore: 7, dailyMinutes: 10, currentQuestion: 0, correctCount: 0, timerInterval: null, timeRemaining: 600 };
+  var quiz = [
+    { q: "The main purpose of IELTS is to:", opts: ["assess English proficiency", "entertain learners", "replace university exams"], c: 0, exp: "IELTS evaluates your English for academic or immigration." },
+    { q: "Regular practice helps because:", opts: ["builds confidence & familiarity", "guarantees high score", "others do it"], c: 0, exp: "Consistent practice builds skills." },
+    { q: "Reading techniques include:", opts: ["Skim and scan", "Read only fiction", "Avoid timed practice"], c: 0, exp: "Skimming and scanning are key." },
+    { q: "Listening section lasts:", opts: ["30 minutes", "60 minutes", "90 minutes"], c: 0, exp: "Listening is about 30 minutes." },
+    { q: "IELTS band scores range:", opts: ["0 to 9", "1 to 10", "A to F"], c: 0, exp: "IELTS uses a 9-band scale." },
+    { q: "Writing Task 2 minimum:", opts: ["250 words", "150 words", "500 words"], c: 0, exp: "Task 2 requires 250+ words." }
+  ];
+
+  function showScreen(id) {
+    var els = document.querySelectorAll('.screen');
+    for (var i = 0; i < els.length; i++) els[i].classList.remove('active');
+    var el = document.getElementById('screen-' + id);
+    if (el) el.classList.add('active');
+  }
+
+  document.querySelectorAll('.score-btn').forEach(function(btn) {
+    btn.onclick = function() {
+      document.querySelectorAll('.score-btn').forEach(function(b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      state.targetScore = parseFloat(btn.dataset.score);
+    };
+  });
+
+  document.querySelectorAll('.time-btn').forEach(function(btn) {
+    btn.onclick = function() {
+      document.querySelectorAll('.time-btn').forEach(function(b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      state.dailyMinutes = parseInt(btn.dataset.minutes, 10);
+    };
+  });
+
+  document.getElementById('onboarding-complete').onclick = function() { showScreen('dashboard'); };
+
+  document.getElementById('start-task').onclick = function() {
+    state.currentQuestion = 0; state.correctCount = 0; state.timeRemaining = state.dailyMinutes * 60;
+    if (state.timerInterval) clearInterval(state.timerInterval);
+    showScreen('task');
+    renderQ();
+    state.timerInterval = setInterval(function() {
+      state.timeRemaining--;
+      document.getElementById('quiz-timer').textContent = Math.floor(state.timeRemaining/60) + ':' + ('0'+state.timeRemaining%60).slice(-2);
+      if (state.timeRemaining <= 0) { clearInterval(state.timerInterval); finishQuiz(); }
+    }, 1000);
+  };
+
+  document.querySelectorAll('.back-btn, .nav-btn').forEach(function(btn) {
+    var t = btn.dataset.screen;
+    if (t) btn.onclick = function() { showScreen(t); };
+  });
+
+  function renderQ() {
+    var q = quiz[state.currentQuestion];
+    if (!q) { finishQuiz(); return; }
+    document.getElementById('current-q').textContent = state.currentQuestion + 1;
+    document.getElementById('total-q').textContent = quiz.length;
+    document.getElementById('question-text').textContent = q.q;
+    var opts = document.getElementById('options');
+    opts.innerHTML = q.opts.map(function(o,i){ return '<button type="button" class="option-btn" data-i="'+i+'">'+o+'</button>'; }).join('');
+    document.getElementById('next-question').disabled = true;
+    opts.querySelectorAll('.option-btn').forEach(function(ob) {
+      ob.onclick = function() {
+        var i = parseInt(ob.dataset.i,10);
+        opts.querySelectorAll('.option-btn').forEach(function(o){ o.disabled = true; });
+        if (i === q.c) { state.correctCount++; ob.classList.add('correct'); } else { ob.classList.add('wrong'); opts.children[q.c].classList.add('correct'); }
+        document.getElementById('feedback-emoji').textContent = i === q.c ? '✓' : '💡';
+        document.getElementById('feedback-text').textContent = i === q.c ? 'Correct! 🎉' : 'Not quite!';
+        document.getElementById('feedback-explanation').textContent = q.exp;
+        document.getElementById('feedback-overlay').classList.add('visible');
+        document.getElementById('next-question').disabled = false;
+      };
+    });
+  }
+
+  function advance() {
+    document.getElementById('feedback-overlay').classList.remove('visible');
+    state.currentQuestion++;
+    if (state.currentQuestion >= quiz.length) finishQuiz(); else renderQ();
+  }
+
+  document.getElementById('next-question').onclick = advance;
+  document.getElementById('feedback-continue').onclick = advance;
+
+  function finishQuiz() {
+    if (state.timerInterval) { clearInterval(state.timerInterval); state.timerInterval = null; }
+    document.getElementById('points-earned').textContent = '+' + Math.round(state.correctCount * 12 + Math.min(20, state.timeRemaining/30));
+    showScreen('reward');
+  }
+
+  document.getElementById('reward-continue').onclick = function() { showScreen('dashboard'); };
+})();
+  </script>
+</body>
+</html>

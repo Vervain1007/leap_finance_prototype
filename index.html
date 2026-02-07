@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#6d28d9">
+  <title>Leap Scholar – IELTS Prep</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- ONBOARDING (Full screen, first-time only) -->
+    <section id="screen-onboarding" class="screen screen-full active">
+      <div class="onboarding-content">
+        <div class="logo">📚 Leap Scholar</div>
+        <h1>Welcome to IELTS Prep! 🌟</h1>
+        <p class="subtitle">Let's personalize your journey. Quick questions — promise it won't take long!</p>
+        <div class="onboarding-form">
+          <label>What's your target IELTS score?</label>
+          <div class="score-options">
+            <button type="button" class="score-btn" data-score="6.0">6.0</button>
+            <button type="button" class="score-btn" data-score="6.5">6.5</button>
+            <button type="button" class="score-btn selected" data-score="7.0">7.0</button>
+            <button type="button" class="score-btn" data-score="7.5">7.5</button>
+            <button type="button" class="score-btn" data-score="8.0">8.0+</button>
+          </div>
+          <label>How much time can you spare daily?</label>
+          <div class="time-options">
+            <button type="button" class="time-btn" data-minutes="5">5 min</button>
+            <button type="button" class="time-btn selected" data-minutes="10">10 min</button>
+            <button type="button" class="time-btn" data-minutes="15">15 min</button>
+            <button type="button" class="time-btn" data-minutes="20">20 min</button>
+          </div>
+          <button type="button" id="onboarding-complete" class="cta-btn">Let's Go! 🚀</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- APP SHELL (Header + Content + Bottom Nav) -->
+    <div id="app-shell" class="screen">
+      <header class="app-header">
+        <div class="app-header-inner">
+          <span class="app-logo">📚 Leap IELTS</span>
+          <div class="app-header-right">
+            <span class="streak-pill">🔥 5</span>
+            <span class="hearts-pill">❤️ 3</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-main">
+        <!-- TAB: Home / Dashboard -->
+        <section id="tab-dashboard" class="tab-panel active">
+          <div class="page-section">
+            <h2 class="greeting">Good morning! ☀️</h2>
+            <p class="greeting-sub">You're on fire! One more day and you'll beat your best streak.</p>
+          </div>
+
+          <div class="page-section">
+            <div class="section-header">
+              <span>Your Progress</span>
+              <span class="progress-pct">42%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 42%"></div>
+            </div>
+          </div>
+
+          <div class="page-section">
+            <h3 class="section-title">Quick Start</h3>
+            <div class="task-card featured" id="start-task" data-task="quiz">
+              <div class="task-card-badge">10 min</div>
+              <h4>Quick Reading Quiz</h4>
+              <p>8 questions • Earn points & keep your streak</p>
+              <button type="button" class="task-card-btn">Start →</button>
+            </div>
+          </div>
+
+          <div class="page-section">
+            <h3 class="section-title">Skills Overview</h3>
+            <div class="skills-grid">
+              <div class="skill-card completed">
+                <span class="skill-icon">📖</span>
+                <span>Reading</span>
+                <span class="skill-status">In progress</span>
+              </div>
+              <div class="skill-card locked">
+                <span class="skill-icon">✍️</span>
+                <span>Writing</span>
+                <span class="skill-status">Locked</span>
+              </div>
+              <div class="skill-card locked">
+                <span class="skill-icon">👂</span>
+                <span>Listening</span>
+                <span class="skill-status">Locked</span>
+              </div>
+              <div class="skill-card locked">
+                <span class="skill-icon">🗣️</span>
+                <span>Speaking</span>
+                <span class="skill-status">Locked</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB: Gamified Tasks -->
+        <section id="tab-tasks" class="tab-panel">
+          <div class="page-section">
+            <h3 class="section-title">🎮 Daily Tasks</h3>
+            <p class="section-desc">Complete tasks to earn points, build streaks & unlock modules!</p>
+          </div>
+          <div class="tasks-list">
+            <div class="task-card gamified" data-task="quiz">
+              <span class="task-type-icon">📝</span>
+              <div class="task-card-body">
+                <h4>Reading Quiz</h4>
+                <p>8 MCQs • 10 min • +80 pts</p>
+                <span class="task-badge streak">🔥 Streak</span>
+              </div>
+              <button type="button" class="task-play-btn">Play</button>
+            </div>
+            <div class="task-card gamified" data-task="flashcards">
+              <span class="task-type-icon">🃏</span>
+              <div class="task-card-body">
+                <h4>Vocabulary Flashcards</h4>
+                <p>15 cards • 5 min • +50 pts</p>
+                <span class="task-badge">📖 Reading</span>
+              </div>
+              <button type="button" class="task-play-btn">Play</button>
+            </div>
+            <div class="task-card gamified" data-task="listening">
+              <span class="task-type-icon">👂</span>
+              <div class="task-card-body">
+                <h4>Listening Practice</h4>
+                <p>Short audio + 5 questions • 8 min</p>
+                <span class="task-badge">🔒 Unlocks soon</span>
+              </div>
+              <button type="button" class="task-play-btn locked">Locked</button>
+            </div>
+            <div class="task-card gamified" data-task="writing">
+              <span class="task-type-icon">✍️</span>
+              <div class="task-card-body">
+                <h4>Writing Prompt</h4>
+                <p>Task 2 outline • 15 min • +100 pts</p>
+                <span class="task-badge">🔒 Unlocks soon</span>
+              </div>
+              <button type="button" class="task-play-btn locked">Locked</button>
+            </div>
+            <div class="task-card gamified" data-task="tictactoe">
+              <span class="task-type-icon">🎮</span>
+              <div class="task-card-body">
+                <h4>Tic Tac Toe Challenge</h4>
+                <p>Answer questions to claim cells • 10 min • +75 pts</p>
+                <span class="task-badge">🧠 Brain Break</span>
+              </div>
+              <button type="button" class="task-play-btn">Play</button>
+            </div>
+          </div>
+          <div class="page-section tasks-tip">
+            <p class="tip-text">💡 Complete at least 1 task daily to maintain your streak!</p>
+          </div>
+        </section>
+
+        <!-- TAB: Progress / Roadmap -->
+        <section id="tab-progress" class="tab-panel">
+          <div class="page-section">
+            <h3 class="section-title">Your Preparation Path</h3>
+            <p class="section-desc">Step by step to your target score of 7.0</p>
+          </div>
+          <div class="roadmap">
+            <div class="roadmap-item completed">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-content">
+                <h4>Reading Foundations</h4>
+                <p>Completed ✓</p>
+              </div>
+            </div>
+            <div class="roadmap-item completed">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-content">
+                <h4>Listening Basics</h4>
+                <p>Completed ✓</p>
+              </div>
+            </div>
+            <div class="roadmap-item current">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-content">
+                <h4>Reading Practice</h4>
+                <p>42% — Long passages next</p>
+              </div>
+            </div>
+            <div class="roadmap-item locked">
+              <div class="roadmap-dot locked"></div>
+              <div class="roadmap-content">
+                <h4>Writing Task 2</h4>
+                <p>Unlock after Reading</p>
+              </div>
+            </div>
+            <div class="roadmap-item locked">
+              <div class="roadmap-dot locked"></div>
+              <div class="roadmap-content">
+                <h4>Speaking Practice</h4>
+                <p>Coming soon</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB: Leaderboard -->
+        <section id="tab-leaderboard" class="tab-panel">
+          <div class="page-section">
+            <h3 class="section-title">Weekly Leaderboard</h3>
+            <p class="section-desc">Friendly competition — do your best! 🏆</p>
+          </div>
+          <div class="leaderboard">
+            <div class="leader-row rank-1">
+              <span class="leader-rank">1</span>
+              <span class="leader-name">Sarah K.</span>
+              <span class="leader-pts">2,340</span>
+            </div>
+            <div class="leader-row rank-2">
+              <span class="leader-rank">2</span>
+              <span class="leader-name">Ravi M.</span>
+              <span class="leader-pts">2,120</span>
+            </div>
+            <div class="leader-row rank-3 you">
+              <span class="leader-rank">3</span>
+              <span class="leader-name">You 👋</span>
+              <span class="leader-pts">1,890</span>
+            </div>
+            <div class="leader-row">
+              <span class="leader-rank">4</span>
+              <span class="leader-name">Priya S.</span>
+              <span class="leader-pts">1,650</span>
+            </div>
+            <div class="leader-row">
+              <span class="leader-rank">5</span>
+              <span class="leader-name">Alex T.</span>
+              <span class="leader-pts">1,420</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB: Review -->
+        <section id="tab-review" class="tab-panel">
+          <div class="page-section">
+            <h3 class="section-title">Weekly Review</h3>
+            <p class="section-desc">Week of Feb 1–7</p>
+          </div>
+          <div class="review-section">
+            <h4 class="review-label">💪 Strengths</h4>
+            <ul>
+              <li>Reading Comprehension — 92% accuracy</li>
+              <li>Listening for details — Strong</li>
+            </ul>
+          </div>
+          <div class="review-section focus">
+            <h4 class="review-label">📈 Focus Areas</h4>
+            <ul>
+              <li>Writing Task 2 — Structure practice</li>
+              <li>Speaking Part 2 — Time management</li>
+            </ul>
+          </div>
+          <div class="review-section improvement">
+            <h4 class="review-label">vs Last Week</h4>
+            <p>+12% Reading • +3 day streak • 15 min more practiced</p>
+          </div>
+          <div class="review-section suggestion">
+            <h4 class="review-label">✨ Next Week</h4>
+            <p>Focus 2–3 sessions on Writing Task 2. You're doing great! 🌟</p>
+          </div>
+        </section>
+      </main>
+
+      <nav class="app-bottom-nav">
+        <button type="button" class="nav-tab active" data-tab="dashboard">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">Home</span>
+        </button>
+        <button type="button" class="nav-tab" data-tab="tasks">
+          <span class="nav-icon">🎮</span>
+          <span class="nav-label">Tasks</span>
+        </button>
+        <button type="button" class="nav-tab" data-tab="progress">
+          <span class="nav-icon">🗺️</span>
+          <span class="nav-label">Progress</span>
+        </button>
+        <button type="button" class="nav-tab" data-tab="leaderboard">
+          <span class="nav-icon">🏆</span>
+          <span class="nav-label">Leaderboard</span>
+        </button>
+        <button type="button" class="nav-tab" data-tab="review">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Review</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- QUIZ SCREEN (Full screen overlay) -->
+    <section id="screen-task" class="screen screen-full">
+      <header class="quiz-header">
+        <button type="button" class="back-btn" data-screen="app-shell">← Back</button>
+        <div class="quiz-timer" id="quiz-timer">10:00</div>
+        <span class="quiz-counter">Q <span id="current-q">1</span>/<span id="total-q">8</span></span>
+      </header>
+      <div class="quiz-content">
+        <div class="quiz-card">
+          <p class="quiz-category">Reading • Passage 1</p>
+          <h3 class="quiz-question" id="question-text">Loading...</h3>
+          <div class="quiz-options" id="options"></div>
+          <button type="button" class="quiz-next" id="next-question" disabled>Next →</button>
+        </div>
+      </div>
+      <div class="feedback-overlay" id="feedback-overlay">
+        <div class="feedback-modal">
+          <span class="feedback-emoji" id="feedback-emoji">✓</span>
+          <p class="feedback-text" id="feedback-text">Correct!</p>
+          <p class="feedback-explanation" id="feedback-explanation"></p>
+          <button type="button" class="feedback-btn" id="feedback-continue">Got it! →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- REWARD SCREEN (Full screen overlay) -->
+    <section id="screen-reward" class="screen screen-full">
+      <div class="reward-screen">
+        <div class="reward-celebration">🎉</div>
+        <h1>Awesome work! 🌟</h1>
+        <p class="reward-sub">You completed today's task!</p>
+        <div class="reward-cards">
+          <div class="reward-card">
+            <span class="reward-value" id="points-earned">+85</span>
+            <span class="reward-label">Points</span>
+          </div>
+          <div class="reward-card highlight">
+            <span class="reward-value">🔥 6</span>
+            <span class="reward-label">Day streak!</span>
+          </div>
+          <div class="reward-card unlock">
+            <span class="reward-value">🔓</span>
+            <span class="reward-label">Writing Unlocked!</span>
+          </div>
+        </div>
+        <p class="reward-msg">Keep it up! Consistency is your superpower. 💪</p>
+        <button type="button" class="cta-btn" id="reward-continue">Continue</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+  var s = { targetScore: 7, dailyMinutes: 10, cur: 0, correct: 0, timer: null, time: 600 };
+  var q = [
+    { q: "The main purpose of IELTS is to:", o: ["assess English proficiency", "entertain learners", "replace university exams"], c: 0, e: "IELTS evaluates English for academic/immigration." },
+    { q: "Regular practice helps because:", o: ["builds confidence & familiarity", "guarantees high score", "others do it"], c: 0, e: "Consistent practice builds skills." },
+    { q: "Reading techniques include:", o: ["Skim and scan", "Read only fiction", "Avoid timed practice"], c: 0, e: "Skimming and scanning are key." },
+    { q: "Listening section lasts:", o: ["30 minutes", "60 minutes", "90 minutes"], c: 0, e: "Listening is ~30 min." },
+    { q: "IELTS band scores range:", o: ["0 to 9", "1 to 10", "A to F"], c: 0, e: "IELTS uses 9-band scale." },
+    { q: "Writing Task 2 minimum:", o: ["250 words", "150 words", "500 words"], c: 0, e: "Task 2 requires 250+ words." }
+  ];
+
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(function(el) { el.classList.remove('active'); });
+    var el = document.getElementById('screen-' + id) || document.getElementById(id);
+    if (el) el.classList.add('active');
+  }
+
+  // Onboarding
+  document.querySelectorAll('.score-btn').forEach(function(b) {
+    b.onclick = function() {
+      document.querySelectorAll('.score-btn').forEach(function(x) { x.classList.remove('selected'); });
+      b.classList.add('selected');
+      s.targetScore = parseFloat(b.dataset.score);
+    };
+  });
+  document.querySelectorAll('.time-btn').forEach(function(b) {
+    b.onclick = function() {
+      document.querySelectorAll('.time-btn').forEach(function(x) { x.classList.remove('selected'); });
+      b.classList.add('selected');
+      s.dailyMinutes = parseInt(b.dataset.minutes, 10);
+    };
+  });
+  document.getElementById('onboarding-complete').onclick = function() { show('app-shell'); };
+
+  
+
+  // Bottom nav tabs
+  document.querySelectorAll('.nav-tab').forEach(function(tab) {
+    tab.onclick = function() {
+      document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      var panel = document.getElementById('tab-' + tab.dataset.tab);
+      if (panel) panel.classList.add('active');
+    };
+  });
+
+  function startQuiz() {
+    s.cur = 0; s.correct = 0; s.time = s.dailyMinutes * 60;
+    if (s.timer) clearInterval(s.timer);
+    show('task');
+    renderQ();
+    s.timer = setInterval(function() {
+      s.time--;
+      document.getElementById('quiz-timer').textContent = Math.floor(s.time / 60) + ':' + ('0' + (s.time % 60)).slice(-2);
+      if (s.time <= 0) { clearInterval(s.timer); finishQuiz(); }
+    }, 1000);
+  }
+  document.getElementById('start-task') && (document.getElementById('start-task').onclick = startQuiz);
+  document.querySelectorAll('[data-task="quiz"] .task-card-btn, [data-task="quiz"] .task-play-btn:not(.locked)').forEach(function(btn) {
+    btn.onclick = function(e) { e.stopPropagation(); startQuiz(); };
+  });
+  document.querySelectorAll('[data-task="flashcards"] .task-play-btn').forEach(function(btn) {
+    btn.onclick = function(e) { e.stopPropagation(); alert('Flashcards coming soon! Try the Reading Quiz for now. 📚'); };
+  });
+  document.querySelectorAll('[data-task="tictactoe"] .task-play-btn').forEach(function(btn) {
+    btn.onclick = function(e) { e.stopPropagation(); window.location.href = 'tic-tac-toe.html'; };
+  });
+
+  // If URL has #tasks or ?tab=tasks, open app-shell and activate Tasks tab
+  (function() {
+    var doTasks = false;
+    if (window.location.hash === '#tasks') doTasks = true;
+    if (window.location.search.indexOf('tab=tasks') !== -1) doTasks = true;
+    if (doTasks) {
+      setTimeout(function() {
+        show('app-shell');
+        var tabBtn = document.querySelector('[data-tab="tasks"]');
+        if (tabBtn) {
+          document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+          tabBtn.classList.add('active');
+          document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+          var panel = document.getElementById('tab-tasks');
+          if (panel) panel.classList.add('active');
+        }
+        try { window.history.replaceState({}, document.title, window.location.pathname); } catch(e) {}
+      }, 80);
+    }
+  })();
+
+  // Back button (quiz)
+  document.querySelector('.back-btn[data-screen="app-shell"]').onclick = function() {
+    if (s.timer) { clearInterval(s.timer); s.timer = null; }
+    show('app-shell');
+  };
+
+  function renderQ() {
+    var x = q[s.cur];
+    if (!x) { finishQuiz(); return; }
+    document.getElementById('current-q').textContent = s.cur + 1;
+    document.getElementById('total-q').textContent = q.length;
+    document.getElementById('question-text').textContent = x.q;
+    var opts = document.getElementById('options');
+    opts.innerHTML = x.o.map(function(o, i) {
+      return '<button type="button" class="option-btn" data-i="' + i + '">' + o + '</button>';
+    }).join('');
+    document.getElementById('next-question').disabled = true;
+    opts.querySelectorAll('.option-btn').forEach(function(ob) {
+      ob.onclick = function() {
+        var i = parseInt(ob.dataset.i, 10);
+        opts.querySelectorAll('.option-btn').forEach(function(o) { o.disabled = true; });
+        if (i === x.c) { s.correct++; ob.classList.add('correct'); }
+        else { ob.classList.add('wrong'); opts.children[x.c].classList.add('correct'); }
+        document.getElementById('feedback-emoji').textContent = i === x.c ? '✓' : '💡';
+        document.getElementById('feedback-text').textContent = i === x.c ? 'Correct! 🎉' : 'Not quite!';
+        document.getElementById('feedback-explanation').textContent = x.e;
+        document.getElementById('feedback-overlay').classList.add('visible');
+        document.getElementById('next-question').disabled = false;
+      };
+    });
+  }
+
+  function advance() {
+    document.getElementById('feedback-overlay').classList.remove('visible');
+    s.cur++;
+    if (s.cur >= q.length) finishQuiz();
+    else renderQ();
+  }
+  document.getElementById('next-question').onclick = document.getElementById('feedback-continue').onclick = advance;
+
+  function finishQuiz() {
+    if (s.timer) { clearInterval(s.timer); s.timer = null; }
+    document.getElementById('points-earned').textContent = '+' + Math.round(s.correct * 12 + Math.min(20, s.time / 30));
+    show('reward');
+  }
+  document.getElementById('reward-continue').onclick = function() { show('app-shell'); };
+});
+  </script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe – Answer to Win</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; min-height: 100vh; background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; color: #fff; position: relative; }
+    .back-btn { position: absolute; top: 20px; left: 20px; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.2s; text-decoration: none; font-family: 'DM Sans', sans-serif; }
+    .back-btn:hover { background: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.5); }
+    h1 { font-size: 1.5rem; margin-bottom: 8px; text-align: center; }
+    .subtitle { font-size: 0.9rem; opacity: 0.9; margin-bottom: 24px; text-align: center; }
+    .scores { display: flex; gap: 32px; margin-bottom: 20px; font-size: 1rem; }
+    .score-box { background: rgba(255,255,255,0.15); padding: 10px 20px; border-radius: 12px; }
+    .score-box .label { font-size: 0.75rem; opacity: 0.8; }
+    .score-box .value { font-size: 1.5rem; font-weight: 700; }
+    .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 24px; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 16px; }
+    .cell { width: 80px; height: 80px; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .cell:hover:not(.taken) { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+    .cell.taken { cursor: default; }
+    .cell.x { color: #a5b4fc; }
+    .cell.o { color: #fcd34d; }
+    .turn { font-size: 1rem; margin-bottom: 16px; font-weight: 600; }
+    .turn.computer { color: #fcd34d; }
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+    .modal.visible { display: flex; }
+    .modal-content { background: #fff; color: #1f2937; border-radius: 20px; padding: 28px; max-width: 400px; width: 100%; }
+    .modal-content h3 { font-size: 1.1rem; margin-bottom: 12px; color: #4c1d95; }
+    .modal-content p { font-size: 1rem; margin-bottom: 16px; line-height: 1.5; }
+    .options { display: flex; flex-direction: column; gap: 10px; }
+    .option-btn { padding: 14px; background: #f5f3ff; border: 2px solid #e9e7ef; border-radius: 10px; text-align: left; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+    .option-btn:hover { border-color: #8b5cf6; background: #ede9fe; }
+    .option-btn.correct { border-color: #059669; background: #d1fae5; }
+    .option-btn.wrong { border-color: #dc2626; background: #fee2e2; }
+    .result-modal .modal-content { text-align: center; }
+    .result-modal h2 { font-size: 1.5rem; margin-bottom: 12px; }
+    .result-modal p { margin-bottom: 20px; }
+    .result-modal .restart { padding: 14px 28px; background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+    .result-modal .restart:hover { opacity: 0.95; }
+  </style>
+</head>
+<body>
+  <a href="index.html#tasks" class="back-btn">← Back to Tasks</a>
+  <h1>🎮 Tic Tac Toe</h1>
+  <p class="subtitle">Answer right to claim your spot! Wrong = computer takes it.</p>
+  <div class="scores">
+    <div class="score-box"><span class="label">You (X)</span><br><span class="value" id="score-you">0</span></div>
+    <div class="score-box"><span class="label">Computer (O)</span><br><span class="value" id="score-comp">0</span></div>
+  </div>
+  <p class="turn" id="turn">Your turn! Pick a cell & answer the question.</p>
+  <div class="board" id="board">
+    <div class="cell" data-i="0"></div>
+    <div class="cell" data-i="1"></div>
+    <div class="cell" data-i="2"></div>
+    <div class="cell" data-i="3"></div>
+    <div class="cell" data-i="4"></div>
+    <div class="cell" data-i="5"></div>
+    <div class="cell" data-i="6"></div>
+    <div class="cell" data-i="7"></div>
+    <div class="cell" data-i="8"></div>
+  </div>
+
+  <div class="modal" id="question-modal">
+    <div class="modal-content">
+      <h3>Question</h3>
+      <p id="question-text">Loading...</p>
+      <div class="options" id="question-options"></div>
+    </div>
+  </div>
+
+  <div class="modal result-modal" id="result-modal">
+    <div class="modal-content">
+      <h2 id="result-title">Game Over</h2>
+      <p id="result-msg"></p>
+      <button type="button" class="restart" id="restart-btn">Play Again</button>
+    </div>
+  </div>
+
+  <script>
+(function() {
+  var board = [null,null,null,null,null,null,null,null,null];
+  var scores = { you: 0, comp: 0 };
+  var pendingCell = null;
+  var userTurn = true;
+
+  var questions = [
+    { q: "IELTS band scores range from:", o: ["0 to 9", "1 to 10", "A to F"], c: 0 },
+    { q: "Writing Task 2 minimum word count:", o: ["250 words", "150 words", "500 words"], c: 0 },
+    { q: "Listening section lasts about:", o: ["30 minutes", "60 minutes", "15 minutes"], c: 0 },
+    { q: "Skim and scan are techniques for:", o: ["Reading", "Writing", "Speaking"], c: 0 },
+    { q: "Speaking Part 2 requires you to speak for:", o: ["1-2 minutes", "30 seconds", "5 minutes"], c: 0 },
+    { q: "The word 'proficient' means:", o: ["Skilled, competent", "Beginner", "Lazy"], c: 0 },
+    { q: "Which is correct: 'effect' (noun) or 'affect' (verb)?", o: ["Both exist; effect=noun, affect=verb", "Only effect exists", "Only affect exists"], c: 0 },
+    { q: "'Furthermore' is used to:", o: ["Add information", "Contrast", "Conclude"], c: 0 },
+    { q: "A thesis statement usually appears in:", o: ["The introduction", "The conclusion", "The middle"], c: 0 },
+    { q: "IELTS stands for:", o: ["International English Language Testing System", "International English Test", "English Language Test"], c: 0 },
+    { q: "Paraphrasing means:", o: ["Rewriting in your own words", "Copying exactly", "Summarizing briefly only"], c: 0 },
+    { q: "In Task 1 Writing, you describe:", o: ["A graph/chart/diagram", "Your opinion", "A story"], c: 0 },
+    { q: "'Nevertheless' means:", o: ["Despite that", "Because of that", "In addition"], c: 0 },
+    { q: "Reading section has how many passages?", o: ["3", "1", "5"], c: 0 },
+    { q: "Cohesive devices help with:", o: ["Linking ideas", "Spelling", "Pronunciation"], c: 0 }
+  ];
+
+  function getRandomQuestion() {
+    return questions[Math.floor(Math.random() * questions.length)];
+  }
+
+  function updateScores() {
+    document.getElementById('score-you').textContent = scores.you;
+    document.getElementById('score-comp').textContent = scores.comp;
+  }
+
+  function checkWinner() {
+    var wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    for (var i = 0; i < wins.length; i++) {
+      var [a,b,c] = wins[i];
+      if (board[a] && board[a] === board[b] && board[a] === board[c]) return board[a];
+    }
+    if (board.every(Boolean)) return 'tie';
+    return null;
+  }
+
+  function computerMove() {
+    var empty = [];
+    for (var i = 0; i < 9; i++) if (!board[i]) empty.push(i);
+    if (empty.length === 0) return;
+    var best = empty[Math.floor(Math.random() * empty.length)];
+    var wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    for (var w = 0; w < wins.length; w++) {
+      var [a,b,c] = wins[w];
+      var line = [board[a], board[b], board[c]];
+      var oCount = line.filter(function(x) { return x === 'O'; }).length;
+      var emptyInLine = wins[w].filter(function(i) { return !board[i]; });
+      if (oCount === 2 && emptyInLine.length === 1) { best = emptyInLine[0]; break; }
+      if (line.filter(function(x) { return x === 'X'; }).length === 2 && emptyInLine.length === 1) { best = emptyInLine[0]; break; }
+    }
+    board[best] = 'O';
+    document.querySelector('[data-i="' + best + '"]').textContent = 'O';
+    document.querySelector('[data-i="' + best + '"]').classList.add('o', 'taken');
+  }
+
+  function showQuestion(cellIndex) {
+    pendingCell = cellIndex;
+    var q = getRandomQuestion();
+    document.getElementById('question-text').textContent = q.q;
+    var opts = document.getElementById('question-options');
+    opts.innerHTML = q.o.map(function(o, i) {
+      return '<button type="button" class="option-btn" data-i="' + i + '">' + o + '</button>';
+    }).join('');
+    opts.querySelectorAll('.option-btn').forEach(function(btn) {
+      btn.onclick = function() {
+        var i = parseInt(btn.dataset.i, 10);
+        opts.querySelectorAll('.option-btn').forEach(function(b) { b.disabled = true; });
+        if (i === q.c) {
+          btn.classList.add('correct');
+          board[pendingCell] = 'X';
+          document.querySelector('[data-i="' + pendingCell + '"]').textContent = 'X';
+          document.querySelector('[data-i="' + pendingCell + '"]').classList.add('x', 'taken');
+        } else {
+          btn.classList.add('wrong');
+          opts.children[q.c].classList.add('correct');
+          board[pendingCell] = 'O';
+          document.querySelector('[data-i="' + pendingCell + '"]').textContent = 'O';
+          document.querySelector('[data-i="' + pendingCell + '"]').classList.add('o', 'taken');
+        }
+        setTimeout(function() {
+          document.getElementById('question-modal').classList.remove('visible');
+          var win = checkWinner();
+          if (win) { endGame(win); return; }
+          if (i === q.c) {
+            userTurn = false;
+            document.getElementById('turn').textContent = "Computer's turn...";
+            document.getElementById('turn').classList.add('computer');
+            setTimeout(function() {
+              computerMove();
+              win = checkWinner();
+              if (win) { endGame(win); return; }
+              userTurn = true;
+              document.getElementById('turn').textContent = "Your turn! Pick a cell & answer.";
+              document.getElementById('turn').classList.remove('computer');
+            }, 600);
+          } else {
+            userTurn = true;
+            document.getElementById('turn').textContent = "Your turn! (Computer stole that spot!)";
+          }
+        }, 800);
+      };
+    });
+    document.getElementById('question-modal').classList.add('visible');
+  }
+
+  function endGame(winner) {
+    if (winner === 'X') { scores.you++; document.getElementById('result-title').textContent = '🎉 You Win!'; document.getElementById('result-msg').textContent = 'You outsmarted the computer!'; }
+    else if (winner === 'O') { scores.comp++; document.getElementById('result-title').textContent = '😅 Computer Wins'; document.getElementById('result-msg').textContent = 'Better luck next time!'; }
+    else { document.getElementById('result-title').textContent = "It's a Tie!"; document.getElementById('result-msg').textContent = 'No one wins this round.'; }
+    updateScores();
+    document.getElementById('result-modal').classList.add('visible');
+  }
+
+  function restart() {
+    board = [null,null,null,null,null,null,null,null,null];
+    document.querySelectorAll('.cell').forEach(function(c) {
+      c.textContent = '';
+      c.classList.remove('x', 'o', 'taken');
+    });
+    userTurn = true;
+    document.getElementById('turn').textContent = "Your turn! Pick a cell & answer the question.";
+    document.getElementById('turn').classList.remove('computer');
+    document.getElementById('result-modal').classList.remove('visible');
+  }
+
+  document.getElementById('board').addEventListener('click', function(e) {
+    var cell = e.target.closest('.cell');
+    if (!cell || cell.classList.contains('taken') || !userTurn) return;
+    showQuestion(parseInt(cell.dataset.i, 10));
+  });
+
+  document.getElementById('restart-btn').onclick = restart;
+})();
+  </script>
+</body>
+</html>
